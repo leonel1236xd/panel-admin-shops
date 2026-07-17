@@ -1,0 +1,147 @@
+.login-page {
+  font-family: "Inter", sans-serif;
+  background: #ffffff;
+  color: #111111;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background: #ffffff;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.login-header h1 {
+  font-family: "Inter", sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #111111;
+  margin-bottom: 4px;
+}
+.login-header p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #111111;
+  background: #f9fafb;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.form-input:focus {
+  border-color: #111111;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.05);
+}
+.form-input.error {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 16px;
+  border-radius: 10px;
+  background: #111111;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+.btn-login:hover {
+  background: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.btn-login:active {
+  transform: translateY(0);
+}
+.btn-login.loading {
+  background: #374151;
+  pointer-events: none;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  display: none;
+}
+.error-message.show {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.login-footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
