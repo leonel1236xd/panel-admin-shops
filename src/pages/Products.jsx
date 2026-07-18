@@ -808,7 +808,7 @@ export default function Products({ gender = "hombre" }) {
                         onChange={(e) =>
                           setFormData({ ...formData, sku: e.target.value })
                         }
-                        placeholder="Ej: STR-001"
+                        placeholder={gender === "mujer"? "Ej: EST-001": "Ej: STR-001"}
                       />
                     </div>
                     <div className="form-group">
