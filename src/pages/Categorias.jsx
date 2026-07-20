@@ -103,6 +103,29 @@ export default function Categorias() {
     };
 
     try {
+      // Verificamos si ya existe una categoría con el mismo slug PARA ESE GÉNERO
+      // (permite el mismo nombre/slug en hombre y en mujer, pero no repetido
+      // dentro del mismo género)
+      let dupQuery = supabase
+        .from("categorias")
+        .select("id")
+        .eq("slug", payload.slug)
+        .eq("genero", payload.genero);
+
+      if (editId) dupQuery = dupQuery.neq("id", editId);
+
+      const { data: dupData, error: dupError } = await dupQuery;
+      if (dupError) throw dupError;
+
+      if (dupData && dupData.length > 0) {
+        return showToast(
+          `Ya existe una categoría "${formData.nombre}" para ${
+            formData.genero === "mujer" ? "Mujer" : "Hombre"
+          }`,
+          "error"
+        );
+      }
+
       if (editId) {
         const { error } = await supabase
           .from("categorias")
@@ -118,7 +141,17 @@ export default function Categorias() {
       setIsModalOpen(false);
       fetchCategories();
     } catch (error) {
-      showToast(`Error: ${error.message}`, "error");
+      // Traducimos el error de restricción única de Postgres a un mensaje claro
+      if (error.code === "23505") {
+        showToast(
+          `Ya existe una categoría con ese nombre para ${
+            formData.genero === "mujer" ? "Mujer" : "Hombre"
+          }`,
+          "error"
+        );
+      } else {
+        showToast(`Error: ${error.message}`, "error");
+      }
     }
   };
 
