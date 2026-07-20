@@ -32,6 +32,7 @@ export default function Products({ gender = "hombre" }) {
   const [uploading, setUploading] = useState(false);
   const [editId, setEditId] = useState(null); // Para saber si estamos editando
   const [deleteId, setDeleteId] = useState(null); // Guarda el ID del producto a eliminar
+  const [deleteImages, setDeleteImages] = useState([]); // Guarda las imágenes del producto a eliminar
 
   // ESTADOS DEL FORMULARIO
   const [formData, setFormData] = useState({
@@ -151,14 +152,49 @@ export default function Products({ gender = "hombre" }) {
     }
   };
 
-  // 1. Solo abre el modal guardando el ID
-  const handleDelete = (id) => {
+  // 1. Solo abre el modal guardando el ID y las imágenes del producto
+  const handleDelete = (id, imagenes = []) => {
     setDeleteId(id);
+    setDeleteImages(imagenes || []);
+  };
+
+  // Extrae el path dentro del bucket a partir de la URL pública guardada en BD
+  // Ej: https://xxxx.supabase.co/storage/v1/object/public/productos_imagenes/hombre/123-foto.jpg
+  // -> hombre/123-foto.jpg
+  const getStoragePathFromUrl = (url) => {
+    const marker = "/productos_imagenes/";
+    const idx = url.indexOf(marker);
+    if (idx === -1) return null;
+    return url.substring(idx + marker.length);
   };
 
   // 2. Ejecuta la eliminación real (Este es tu código anterior adaptado)
   const confirmDelete = async () => {
     if (!deleteId) return;
+
+    // Borrar imágenes del bucket ANTES de borrar el registro, así si algo
+    // falla en storage no perdemos la referencia (el producto sigue existiendo)
+    if (deleteImages.length > 0) {
+      const paths = deleteImages
+        .map((url) => getStoragePathFromUrl(url))
+        .filter(Boolean);
+
+      if (paths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from("productos_imagenes")
+          .remove(paths);
+
+        if (storageError) {
+          // No detenemos el flujo: igual eliminamos el producto,
+          // pero avisamos para que se pueda limpiar manualmente si hace falta
+          console.error("Error al eliminar imágenes del storage:", storageError);
+          showToast(
+            "Producto eliminado, pero hubo un problema al borrar sus imágenes del storage",
+            "error"
+          );
+        }
+      }
+    }
 
     await supabase.from("variantes").delete().eq("producto_id", deleteId);
     const { error } = await supabase
@@ -173,6 +209,7 @@ export default function Products({ gender = "hombre" }) {
       fetchData();
     }
     setDeleteId(null); // Cierra el modal
+    setDeleteImages([]);
   };
 
   const handleEdit = (product) => {
@@ -690,7 +727,7 @@ export default function Products({ gender = "hombre" }) {
                           <button
                             className="btn-icon"
                             title="Eliminar"
-                            onClick={() => handleDelete(p.id)}
+                            onClick={() => handleDelete(p.id, p.imagenes)}
                             style={{ color: "var(--red)" }}
                           >
                             <svg
