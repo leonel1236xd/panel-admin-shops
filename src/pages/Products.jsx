@@ -365,6 +365,30 @@ export default function Products({ gender = "hombre" }) {
   // --- GUARDAR EN BD ---
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ─── VALIDACIONES DE CAMPOS OBLIGATORIOS ───
+    if (!formData.nombre.trim())
+      return showToast("Ingresa el nombre del producto.", "error");
+
+    if (!formData.sku.trim())
+      return showToast("Ingresa el SKU del producto.", "error");
+
+    if (
+      formData.precio === "" ||
+      formData.precio === null ||
+      isNaN(Number(formData.precio))
+    )
+      return showToast("Ingresa un precio válido para el producto.", "error");
+
+    if (Number(formData.precio) <= 0)
+      return showToast("El precio debe ser mayor a 0.", "error");
+
+    if (!formData.categoria_id)
+      return showToast("Selecciona una categoría.", "error");
+
+    if (!formData.marca_id)
+      return showToast("Selecciona una marca.", "error");
+
     if (variantsMatrix.length === 0)
       return showToast(
         "Genera la tabla de stock e ingresa cantidades.",
@@ -401,11 +425,11 @@ export default function Products({ gender = "hombre" }) {
       }
 
       const payload = {
-        nombre: formData.nombre,
-        sku: formData.sku || null,
-        precio: formData.precio,
-        categoria_id: formData.categoria_id || null,
-        marca_id: formData.marca_id || null,
+        nombre: formData.nombre.trim(),
+        sku: formData.sku.trim(),
+        precio: Number(formData.precio),
+        categoria_id: formData.categoria_id,
+        marca_id: formData.marca_id,
         estado: formData.estado,
         descripcion: formData.descripcion || null,
         genero: gender,
@@ -461,7 +485,14 @@ export default function Products({ gender = "hombre" }) {
       fetchData();
     } catch (error) {
       console.error("Error Detallado:", error);
-      showToast(`Error: ${error.message}`, "error");
+      if (error.code === "23505" && error.message?.includes("sku")) {
+        showToast(
+          `Ya existe un producto con el SKU "${formData.sku.trim()}". Usa uno diferente.`,
+          "error"
+        );
+      } else {
+        showToast(`Error: ${error.message}`, "error");
+      }
     } finally {
       setUploading(false);
     }
