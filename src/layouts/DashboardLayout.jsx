@@ -56,86 +56,163 @@ export default function DashboardLayout() {
       sucursales.find((s) => s.id === userSucursal)?.nombre || "Cargando...";
 
     return (
-      <div
-        style={{
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          background: "#F4F5F7",
-        }}
-      >
-        {/* Cabecera del Vendedor (Padding mejorado) */}
-        <header
-          style={{
-            padding: "16px 32px",
-            background: "#0f172a",
-            color: "white",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            zIndex: 10,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <div className="vendedor-layout">
+        {/* Estilos responsivos del panel de vendedor */}
+        <style>{`
+          .vendedor-layout {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #F4F5F7;
+          }
+
+          .vendedor-header {
+            padding: 16px 32px;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 10;
+            flex-wrap: wrap;
+          }
+
+          .vendedor-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0; /* permite que el h2 se pueda truncar */
+          }
+
+          .vendedor-header-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .vendedor-header-badge {
+            background: #3b82f6;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
+          }
+
+          .vendedor-header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+          }
+
+          .vendedor-header-email {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            max-width: 220px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .vendedor-logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+            white-space: nowrap;
+          }
+
+          .vendedor-logout-btn:hover {
+            background: #dc2626;
+          }
+
+          .vendedor-main {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+            padding: 24px;
+          }
+
+          /* Tablets */
+          @media (max-width: 768px) {
+            .vendedor-header {
+              padding: 14px 20px;
+            }
+
+            .vendedor-header-title {
+              font-size: 1.05rem;
+            }
+
+            .vendedor-main {
+              padding: 16px;
+            }
+          }
+
+          /* Celulares */
+          @media (max-width: 480px) {
+            .vendedor-header {
+              padding: 12px 16px;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 10px;
+            }
+
+            .vendedor-header-left {
+              width: 100%;
+              justify-content: space-between;
+            }
+
+            .vendedor-header-title {
+              font-size: 0.95rem;
+              max-width: 65%;
+            }
+
+            .vendedor-header-right {
+              width: 100%;
+              justify-content: space-between;
+            }
+
+            .vendedor-header-email {
+              max-width: 60%;
+            }
+
+            .vendedor-main {
+              padding: 12px;
+            }
+          }
+        `}</style>
+
+        {/* Cabecera del Vendedor */}
+        <header className="vendedor-header">
+          <div className="vendedor-header-left">
             {/* Aquí cargamos el nombre de la sucursal dinámicamente */}
-            <h2
-              style={{
-                margin: 0,
-                fontSize: "1.2rem",
-                fontWeight: 800,
-                letterSpacing: "1px",
-                textTransform: "uppercase",
-              }}
-            >
-              🏪 {nombreSucursal}
-            </h2>
-            <span
-              style={{
-                background: "#3b82f6",
-                fontSize: "0.7rem",
-                padding: "4px 10px",
-                borderRadius: "12px",
-                fontWeight: 700,
-              }}
-            >
-              POS VENDEDOR
-            </span>
+            <h2 className="vendedor-header-title">🏪 {nombreSucursal}</h2>
+            <span className="vendedor-header-badge">POS VENDEDOR</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <span style={{ fontSize: "0.85rem", color: "#cbd5e1" }}>
-              {user?.email}
-            </span>
-            <button
-              onClick={handleLogout}
-              style={{
-                background: "#ef4444",
-                color: "white",
-                border: "none",
-                padding: "6px 14px",
-                borderRadius: "6px",
-                cursor: "pointer",
-                fontWeight: 700,
-                fontSize: "0.8rem",
-                transition: "background 0.2s",
-              }}
-              onMouseOver={(e) => (e.target.style.background = "#dc2626")}
-              onMouseOut={(e) => (e.target.style.background = "#ef4444")}
-            >
+          <div className="vendedor-header-right">
+            <span className="vendedor-header-email">{user?.email}</span>
+            <button className="vendedor-logout-btn" onClick={handleLogout}>
               Salir
             </button>
           </div>
         </header>
 
-        {/* Área Principal (Le agregamos padding de 24px para que no se pegue a los bordes) */}
-        <main
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            position: "relative",
-            padding: "24px",
-          }}
-        >
+        {/* Área Principal */}
+        <main className="vendedor-main">
           <Outlet />
         </main>
       </div>
